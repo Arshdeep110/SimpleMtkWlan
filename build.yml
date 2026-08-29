@@ -1,1 +1,21 @@
+name: Build SimpleMtkWlan Kext
 
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Compile Kext with Xcode
+        run: |
+          xcodebuild -project SimpleMtkWlan.xcodeproj -scheme SimpleMtkWlan -configuration Release build
+
+      - name: Upload Kext Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleMtkWlan-kext
+          path: build/Release/SimpleMtkWlan.kext
