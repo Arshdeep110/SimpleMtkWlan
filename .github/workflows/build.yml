@@ -10,10 +10,14 @@ jobs:
   build:
     runs-on: macos-14
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Clone MacKernelSDK
+        run: |
+          git clone https://github.com/acidanthera/MacKernelSDK.git
 
       - name: Compile Kext with Xcode
         run: |
