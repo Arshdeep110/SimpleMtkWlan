@@ -2,6 +2,9 @@ name: Build SimpleMtkWlan Kext
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -9,15 +12,24 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Compile Kext with Xcode
         run: |
-          xcodebuild -project SimpleMtkWlan.xcodeproj -scheme SimpleMtkWlan -configuration Release -derivedDataPath DerivedData build
+          xcodebuild -project SimpleMtkWlan.xcodeproj \
+            -scheme SimpleMtkWlan \
+            -configuration Debug \
+            -derivedDataPath DerivedData \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
 
       - name: Locate and Package Kext
         run: |
           mkdir -p output
-          find DerivedData -name "SimpleMtkWlan.kext" -exec cp -R {} output/ \;
+          find DerivedData -type d -name "SimpleMtkWlan.kext" -exec cp -R {} output/ \;
 
       - name: Upload Kext Artifact
         uses: actions/upload-artifact@v4
