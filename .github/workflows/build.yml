@@ -1,1 +1,27 @@
 
+name: Build SimpleMtkWlan Kext
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Compile Kext with Xcode
+        run: |
+          xcodebuild -project SimpleMtkWlan.xcodeproj -scheme SimpleMtkWlan -configuration Release -derivedDataPath DerivedData build
+
+      - name: Locate and Package Kext
+        run: |
+          mkdir -p output
+          find DerivedData -name "SimpleMtkWlan.kext" -exec cp -R {} output/ \;
+
+      - name: Upload Kext Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleMtkWlan-kext
+          path: output/SimpleMtkWlan.kext
